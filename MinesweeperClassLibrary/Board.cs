@@ -19,7 +19,7 @@ namespace MinesweeperClassLibrary
         // Constructor
         public Board(int size)
         {
-            // Initial size of the board is defined here
+            // Initial size of the board is defined here.
             this.Size = size;
 
             // Creates a new 2D array of type cell.
