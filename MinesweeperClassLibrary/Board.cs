@@ -11,7 +11,6 @@ namespace MinesweeperClassLibrary
         private int Size { get; set; }
         private Cell[,] Grid { get; set; }
         private double Difficulty { get; set; } = .5;
-        private Cell cell { get; set; }
 
 
 
@@ -25,7 +24,6 @@ namespace MinesweeperClassLibrary
             // Creates a new 2D array of type cell.
             this.Grid = new Cell[size, size];
 
-
             // Filling the 2D array with New Cells
             // Each will have a unique row and column
             for (int i = 0; i < Size; i++)
@@ -33,7 +31,6 @@ namespace MinesweeperClassLibrary
                 for (int j = 0; j < Size; j++)
                 {
                     Grid[i, j] = new Cell(i, j, false, false, 0);
-
                 }
             }
 
@@ -171,6 +168,7 @@ namespace MinesweeperClassLibrary
         // Method will print the value of Cell neighbors in matrix form. 
         // A number value represents he number of neighbors for that Cell. 
         // The L's represents a live mine. E is for an error or unexpected result.
+        // here we go 
         public void PrintNeighbors(Board theBoard)
         {
             for (int i = 0; i < theBoard.Size; i++)
@@ -185,7 +183,7 @@ namespace MinesweeperClassLibrary
                     }
                     else if (c.IsCellLive(c) == true)
                     {
-                        Console.Write("L\t");
+                        Console.Write("X\t");
                     }
                     else
                     {

@@ -11,14 +11,6 @@ namespace MinesweeperClassLibrary
 
         private bool Live { get; set; } = false;
 
-                public Board Aggregate
-        {
-            get => default;
-            set
-            {
-            }
-        }
-
         public Cell(int row, int column, bool visited, bool live, int neighbors)
         {
             this.Row = row;
