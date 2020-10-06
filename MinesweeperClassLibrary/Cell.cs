@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*  Author: Raymond Popsie
+ *  Date: 9/12/2020
+ *  File Name: Cell.cs
+ *  Purpose: This class is to set properties for a Cell object. 
+ *  The cell object will contain a row, column, number of neighboring
+ *  mines (Neighbors), Cells Visted, and mines present. The class will 
+ *  be used by the board class to create a board of Cell objects. 
+ */
+
+using System;
 
 namespace MinesweeperClassLibrary
 {
@@ -42,6 +51,17 @@ namespace MinesweeperClassLibrary
                 isLive = true;
             }
             return isLive;
+        }
+
+        // Sets the Visted property of cell to true
+        public void SetCellToVisited(Cell c)
+        {
+             c.Visted = true;
+        }
+        // Get the value of the Visted property of cell
+        public bool GetCellVisited(Cell c)
+        {
+            return c.Visted;
         }
 
  

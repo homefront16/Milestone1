@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*  Author: Raymond Popsie
+ *  Date: 9/12/2020
+ *  File Name: Board.cs
+ *  Purpose: This class will contain the 2D array of Cell Objects which 
+ *  create the board. It will hold the size of the board, difficulty of the game,
+ *  and the GameOver boolean property. Its purpose is to create the board, 
+ *  populate mines, print board, and any other logic required for the user to 
+ *  handle the Board.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.Serialization;
@@ -11,6 +21,7 @@ namespace MinesweeperClassLibrary
         private int Size { get; set; }
         private Cell[,] Grid { get; set; }
         private double Difficulty { get; set; } = .5;
+        private bool GameOver { get; set; } = false;
 
 
 
@@ -36,6 +47,31 @@ namespace MinesweeperClassLibrary
 
         }
 
+        // Returns the value of the GameOver property of Board
+        public bool GetGameOver()
+        {
+            return GameOver;
+        }
+
+        // Returns the value of the GameOver property of Board
+        public void SetGameOver(Board theBoard)
+        {
+            theBoard.GameOver = true;
+        }
+
+        // Returns the Size property of Board
+        public int GetSize()
+        {
+            return Size;
+        }
+
+        // Returns the value of the Cell given the row and column of the grid
+        public Cell GetCell(int row, int column)
+        {
+            return Grid[row, column];
+        }
+
+        // Sets the difficulty of the game
         public void SetDifficulty()
         {
             this.Difficulty = .12;
@@ -57,7 +93,7 @@ namespace MinesweeperClassLibrary
         {
             // total mines is determined by the size of grid multiplied by the difficulty percentage
             int totalMines = (int)(Size * Difficulty);
-            Console.WriteLine(totalMines);
+            
 
             // While loop will run until there are no mines left
             // each iteration that complete decrements the totalMines variable
@@ -165,6 +201,48 @@ namespace MinesweeperClassLibrary
             Console.WriteLine("==========================================================");
         }
 
+        /// <summary>
+        /// This method will loop through the board to see if there 
+        /// are any visible cells left. It increments each time a Cell
+        /// is found with the Visted property value as false. This indicates
+        /// that the game can continue. The method will then return a boolean 
+        /// value of false unless there are no Cells left that show a Visted Property 
+        /// of false. 
+        /// </summary>
+        /// <param name="theBoard"></param>
+        /// <returns>Boolean value of false unless there are Cells that can still be 
+        /// vistedAN</returns>
+        public bool CheckVisitedSquaresLeft(Board theBoard)
+        {
+            int notVistedCount = 0;
+            bool noCellsToVisit = false;
+
+            for (int i = 0; i < theBoard.Size; i++)
+            {
+                for (int j = 0; j < theBoard.Size; j++)
+                {
+                    Cell c = theBoard.Grid[i, j];
+
+                    if (c.IsCellLive(c) == true)
+                    {
+                        continue;
+                    }
+                    else if (c.GetCellVisited(c) == false)
+                    {
+                        notVistedCount++;
+                    }
+                    else { }
+                }
+            }
+
+            if(notVistedCount == 0)
+            {
+                noCellsToVisit = true;
+            }
+
+            return noCellsToVisit;
+        }
+
         // Method will print the value of Cell neighbors in matrix form. 
         // A number value represents he number of neighbors for that Cell. 
         // The L's represents a live mine. E is for an error or unexpected result.
@@ -196,7 +274,72 @@ namespace MinesweeperClassLibrary
             }
             Console.WriteLine("==========================================================");
         }
+
+
+
+
+
+        /// <summary>
+        /// Prompts user to make a row and column selection. A try catch block is implemented to
+        /// catch possible exceptions.A default value of 1 for row and 1 for column is used if 
+        ///  the user is unable to select a valid row and column. 
+        /// </summary>
+        /// <param name="theBoard"></param>
+        /// <returns>A Cell object</returns>
+        public Cell UserCheckSquare(Board theBoard)
+        {
+            int currentRow = 0;
+            int currentCol = 0;
+
+            /*using a try catch for improper user input. The user will have an opportunities
+              to place the correct input. If the user does not enter the correct input the error
+              will be caught. This will prevent errors and will prevent the user from being in 
+              an endless loop asking for the correct input.*/
+            try
+            {
+                Console.WriteLine("Enter the row number you would like to attempt");
+                currentRow = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Enter the column number you would like to attempt");
+                currentCol = int.Parse(Console.ReadLine());
+                theBoard.Grid[currentRow, currentCol].SetCellToVisited(theBoard.Grid[currentRow, currentCol]);
+
+                return theBoard.Grid[currentRow, currentCol];
+            }
+            /*Most common exception is choosing a number out of range which is caught here. 
+            The user will have a second opportunity to choose the correct input. */
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("Please ensure you enter a number between 0 and 7");
+
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("That is not a valid number. Please ensure that you are entering a number between +" +
+                    "0 and 7");
+            }
+
+            catch (Exception)
+            {
+                Console.WriteLine("Not Valid. Setting default to 1, 1");
+            }
+
+            /*Checks to ensure the entered amounts are within the grid. If not default values of 1, 1 
+            are entered. */
+            if (currentRow < 0 || currentRow > theBoard.Size || currentCol < 0 || currentCol > theBoard.Size)
+            {
+                Console.WriteLine("Not Valid. Setting default to 1, 1");
+                currentRow = 1;
+                currentCol = 1;
+            }
+
+            theBoard.Grid[currentRow, currentCol].SetCellToVisited(theBoard.Grid[currentRow, currentCol]);
+
+            return theBoard.Grid[currentRow, currentCol];
+        }
     }
+
+  
 
 
 
