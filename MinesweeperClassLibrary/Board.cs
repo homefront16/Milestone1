@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
 using System.Runtime.Serialization;
 using System.Text;
 
@@ -128,7 +129,7 @@ namespace MinesweeperClassLibrary
         /*Finds how many live mines are next to the cell.
         sets value of neighbors which is the number of neighboring mines
         Traverses through each grid location adjacent to the current Cell
-        if a mine is located neighbor is incremeneted for that Cell object. */
+        if a mine is located neighbor is incremented for that Cell object. */
         public void CalculateLiveNeighbors(Board theBoard)
         {
             /*these arrays hold the x and y values for adjacent positions
@@ -337,6 +338,56 @@ namespace MinesweeperClassLibrary
 
             return theBoard.Grid[currentRow, currentCol];
         }
+
+        public int IndexHelper()
+        {
+            return +1;
+        }
+
+      /*  public bool FloodFill(int row, int col)
+        {
+            // receive the starting row and column to chech neighboring cells
+
+            *//*these arrays hold the x and y values for adjacent positions
+               around the selected grid location. They will act as "square" around
+               the selected grid location to check for mines*//*
+            int[] offSetX = { 0, 1, 1, 1, 0, -1, -1, -1 };
+            int[] offSetY = { -1, -1, 0, 1, 1, 1, 0, -1 };
+
+            int offsetTraverseIndex = 0;
+      
+            int counter = 0;
+
+          
+                // Check which Cells have no bombs next to them
+                for (int i = 0; i < 8; i++)
+                {
+                    int nx = row + offSetX[i];
+                    int ny = col + offSetY[i];
+
+                    // The first if statement catches times where the current
+                    // for loop is checking a location that is out of bounds
+                    if (nx < 0 || nx > Size - 1 || ny < 0 || ny > Size - 1)
+                    {
+                        continue;
+                    }
+                    if (Grid[ny, nx].IsCellLive(Grid[ny, nx]) == true)
+                    {
+                    return false;
+                    }
+
+                    // Mark Cell as visted when they are included in the block of affected cells
+                    Grid[ny, nx].SetCellToVisited(Grid[ny, nx]);
+                    // Call FloodFill until there are mines next to visted cells
+                }
+                counter++;
+                Console.WriteLine("We have called Flood Fill {0} times ", counter);
+               
+                Console.WriteLine("Value of offsetTraverse is {0} and the value of other index is {1}", offsetTraverseIndex + 1, offsetTraverseIndex);
+                return FloodFill(offSetX[offsetTraverseIndex + 1], offSetY[offsetTraverseIndex]);
+            
+
+        }*/
     }
 
   

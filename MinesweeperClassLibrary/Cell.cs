@@ -35,6 +35,16 @@ namespace MinesweeperClassLibrary
             this.Column = column;
         }
 
+        public int GetRow(Cell c)
+        {
+            return c.Row;
+        }
+
+        public int GetColumn(Cell c)
+        {
+            return c.Column;
+        }
+
         // Sets cell Live value to true which represents a mine being present
         public void SetCellToLive(Cell c)
         {

@@ -24,7 +24,7 @@ namespace Milestone1
              {
                 
                 Cell attemptedSquare = board.UserCheckSquare(board);
-
+                board.FloodFill(attemptedSquare.GetRow(attemptedSquare), attemptedSquare.GetColumn(attemptedSquare));
                 if (attemptedSquare.IsCellLive(attemptedSquare))
                 {
                     Console.WriteLine("You Hit a Mine! GAME OVER...");
