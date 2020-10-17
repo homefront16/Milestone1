@@ -338,39 +338,57 @@ namespace MinesweeperClassLibrary
 
             return theBoard.Grid[currentRow, currentCol];
         }
-
-        public int IndexHelper()
+        
+        /// <summary>
+        /// This method checks to ensure the given row and column are 
+        /// within the Grid.  
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns>True if given row and column are within the Grid</returns>
+        public bool LimitCheck(int row, int col)
         {
-            return +1;
+            if(row < 0 || row > Size - 1 || col < 0 || col > Size - 1)
+            {
+                return false;
+            }
+            return true;
         }
 
-      /*  public bool FloodFill(int row, int col)
+        /// <summary>
+        /// A  Recursive method that checks the adjacent Cells around
+        /// the given row and column for bombs. If no bomb is found the 
+        /// value of the Cell is changed to visted. The method is called 
+        /// recursively until either the row and column are out of bounds or 
+        /// a bomb is found adjacent to the row and column
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns>False when row and col are out of bounds or a bomb is found 
+        /// adjacent to the row and column</returns>
+        public bool FloodFill(int row, int col)
         {
-            // receive the starting row and column to chech neighboring cells
+    
 
-            *//*these arrays hold the x and y values for adjacent positions
-               around the selected grid location. They will act as "square" around
-               the selected grid location to check for mines*//*
+          /*these arrays hold the x and y values for adjacent positions
+            around the selected grid location. They will act as "square" around
+            the selected grid location to check for mines*/
             int[] offSetX = { 0, 1, 1, 1, 0, -1, -1, -1 };
             int[] offSetY = { -1, -1, 0, 1, 1, 1, 0, -1 };
 
-            int offsetTraverseIndex = 0;
-      
-            int counter = 0;
-
-          
                 // Check which Cells have no bombs next to them
                 for (int i = 0; i < 8; i++)
                 {
                     int nx = row + offSetX[i];
                     int ny = col + offSetY[i];
-
-                    // The first if statement catches times where the current
-                    // for loop is checking a location that is out of bounds
-                    if (nx < 0 || nx > Size - 1 || ny < 0 || ny > Size - 1)
+                    
+                    // checking to make sure location is within the Grid
+                    if (!LimitCheck(nx, ny))
                     {
                         continue;
                     }
+
+                    // If a bomb is found adjacent to the current location boolean returns false
                     if (Grid[ny, nx].IsCellLive(Grid[ny, nx]) == true)
                     {
                     return false;
@@ -378,16 +396,33 @@ namespace MinesweeperClassLibrary
 
                     // Mark Cell as visted when they are included in the block of affected cells
                     Grid[ny, nx].SetCellToVisited(Grid[ny, nx]);
-                    // Call FloodFill until there are mines next to visted cells
                 }
-                counter++;
-                Console.WriteLine("We have called Flood Fill {0} times ", counter);
-               
-                Console.WriteLine("Value of offsetTraverse is {0} and the value of other index is {1}", offsetTraverseIndex + 1, offsetTraverseIndex);
-                return FloodFill(offSetX[offsetTraverseIndex + 1], offSetY[offsetTraverseIndex]);
-            
-
-        }*/
+        
+                /*Conditional statements increment or decrement the row 
+                toward the center of board. It also ensures that 
+                the given row and column are not out of bounds
+                if its out of bounds boolean returns false*/
+                if(row < 4 && col < 4 && LimitCheck(row, col))
+                {
+                    return FloodFill(row + 1, col + 1);
+                }
+                else if (row > 4 && col > 4 && LimitCheck(row, col))
+                {
+                    return FloodFill(row - 1, col - 1);
+                }
+                else if(row < 4 && col > 4 && LimitCheck(row, col))
+                {
+                    return FloodFill(row + 1, col - 1);
+                }
+                else if(row > 4 && col < 4 && LimitCheck(row, col))
+                {
+                    return FloodFill(row - 1, col + 1);
+                }
+                else
+                {
+                    return false;
+                }
+        }
     }
 
   
