@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.Serialization;
@@ -73,9 +74,9 @@ namespace MinesweeperClassLibrary
         }
 
         // Sets the difficulty of the game
-        public void SetDifficulty()
+        public void SetDifficulty(double difficulty)
         {
-            this.Difficulty = .12;
+            this.Difficulty = difficulty;
 
         }
 
@@ -126,6 +127,9 @@ namespace MinesweeperClassLibrary
 
         }
 
+       
+        
+
         /*Finds how many live mines are next to the cell.
         sets value of neighbors which is the number of neighboring mines
         Traverses through each grid location adjacent to the current Cell
@@ -170,6 +174,8 @@ namespace MinesweeperClassLibrary
             }
 
         }
+
+
 
         // Method will print cells in matrix form. 
         // The N's represent no mine
@@ -389,15 +395,20 @@ namespace MinesweeperClassLibrary
                     }
 
                     // If a bomb is found adjacent to the current location boolean returns false
-                    if (Grid[ny, nx].IsCellLive(Grid[ny, nx]) == true)
+                    /*if (Grid[ny, nx].IsCellLive(Grid[ny, nx]) == true)
                     {
-                    return false;
+                        return false;
+                    }*/
+                    if(Grid[ny, nx].GetNeighbors(Grid[ny, nx]) > 0)
+                    {
+                        return false;
                     }
+
 
                     // Mark Cell as visted when they are included in the block of affected cells
                     Grid[ny, nx].SetCellToVisited(Grid[ny, nx]);
                 }
-        
+                
                 /*Conditional statements increment or decrement the row 
                 toward the center of board. It also ensures that 
                 the given row and column are not out of bounds
@@ -422,6 +433,69 @@ namespace MinesweeperClassLibrary
                 {
                     return false;
                 }
+        }
+
+        public void FloodFill2(Board theBoard, int row, int col)
+        {
+
+
+            /*these arrays hold the x and y values for adjacent positions
+              around the selected grid location. They will act as "square" around
+              the selected grid location to check for mines*/
+            int[] offSetX = { 0, 1, 1, 1, 0, -1, -1, -1 };
+            int[] offSetY = { -1, -1, 0, 1, 1, 1, 0, -1 };
+
+            if(LimitCheck(row, col) && Grid[row, col].GetCellVisited(Grid[row, col]) == false)
+            {
+                Grid[row, col].SetCellToVisited(Grid[row, col]);
+
+                if(theBoard.CheckForAdjacentMines(row, col) == 0)
+                {
+                    FloodFill2(theBoard, row - 1, col - 1);
+                    FloodFill2(theBoard, row - 1, col);
+                    FloodFill2(theBoard, row - 1, col + 1);
+                    FloodFill2(theBoard, row, col - 1);
+                    FloodFill2(theBoard, row, col + 1);
+                    FloodFill2(theBoard, row + 1, col - 1);
+                    FloodFill2(theBoard, row + 1, col);
+                    FloodFill2(theBoard, row + 1, col + 1);
+                }
+            }
+
+        }
+
+        public int CheckForAdjacentMines(int row, int col)
+        {
+            int mineCount = 0;
+            /*these arrays hold the x and y values for adjacent positions
+            around the selected grid location. They will act as "square" around
+            the selected grid location to check for mines*/
+            int[] offSetX = { 0, 1, 1, 1, 0, -1, -1, -1 };
+            int[] offSetY = { -1, -1, 0, 1, 1, 1, 0, -1 };
+
+            // Check which Cells have no bombs next to them
+            for (int i = 0; i < 8; i++)
+            {
+                int nx = row + offSetX[i];
+                int ny = col + offSetY[i];
+
+                // checking to make sure location is within the Grid
+                if (!LimitCheck(nx, ny))
+                {
+                    continue;
+                }
+
+                // If a bomb is found adjacent to the current location boolean returns false
+                /*if (Grid[ny, nx].IsCellLive(Grid[ny, nx]) == true)
+                {
+                    return false;
+                }*/
+                if (Grid[ny, nx].GetNeighbors(Grid[ny, nx]) > 0)
+                {
+                    mineCount++;
+                }
+            }
+            return mineCount;
         }
     }
 
