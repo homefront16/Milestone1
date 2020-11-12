@@ -9,7 +9,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="131*"/>
-            <ColumnDefinition Width="28*"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="633*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -17,12 +17,13 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Grid.ColumnSpan="3">
+        <Menu Grid.Row="0" Grid.ColumnSpan="1">
             <MenuItem Header="New Game" Command="{Binding NewGameCommand}" CommandParameter="{Binding ElementName=panel, Path=Width}"/>
         </Menu>
-        <!--<WrapPanel x:Name="panel" Grid.Row="1" Width="600" Height="300">
-            
-        </WrapPanel>-->
+        <WrapPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Background="LightGreen">
+            <TextBlock x:Name="stopwatch" FontSize="24" Text="{Binding TimeElapsed, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+        </WrapPanel>
+  
 
         <ItemsControl  x:Name="panel" Grid.Row="1" Width="800" Height="800" Margin ="100" ItemsSource="{Binding ButtonCells, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="3">
             <ItemsControl.ItemsPanel>

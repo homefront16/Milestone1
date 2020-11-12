@@ -438,18 +438,11 @@ namespace MinesweeperClassLibrary
         public void FloodFill2(Board theBoard, int row, int col)
         {
 
-
-            /*these arrays hold the x and y values for adjacent positions
-              around the selected grid location. They will act as "square" around
-              the selected grid location to check for mines*/
-            int[] offSetX = { 0, 1, 1, 1, 0, -1, -1, -1 };
-            int[] offSetY = { -1, -1, 0, 1, 1, 1, 0, -1 };
-
             if(LimitCheck(row, col) && Grid[row, col].GetCellVisited(Grid[row, col]) == false)
             {
                 Grid[row, col].SetCellToVisited(Grid[row, col]);
 
-                if(theBoard.CheckForAdjacentMines(row, col) == 0)
+                if(Grid[row, col].GetNeighbors(Grid[row, col]) == 0)
                 {
                     FloodFill2(theBoard, row - 1, col - 1);
                     FloodFill2(theBoard, row - 1, col);
@@ -464,12 +457,12 @@ namespace MinesweeperClassLibrary
 
         }
 
-        public int CheckForAdjacentMines(int row, int col)
+     /*   public int CheckForAdjacentMines(int row, int col)
         {
             int mineCount = 0;
-            /*these arrays hold the x and y values for adjacent positions
+            *//*these arrays hold the x and y values for adjacent positions
             around the selected grid location. They will act as "square" around
-            the selected grid location to check for mines*/
+            the selected grid location to check for mines*//*
             int[] offSetX = { 0, 1, 1, 1, 0, -1, -1, -1 };
             int[] offSetY = { -1, -1, 0, 1, 1, 1, 0, -1 };
 
@@ -485,18 +478,13 @@ namespace MinesweeperClassLibrary
                     continue;
                 }
 
-                // If a bomb is found adjacent to the current location boolean returns false
-                /*if (Grid[ny, nx].IsCellLive(Grid[ny, nx]) == true)
-                {
-                    return false;
-                }*/
-                if (Grid[ny, nx].GetNeighbors(Grid[ny, nx]) > 0)
+                if (Grid[nx, ny].GetNeighbors(Grid[nx, ny]) > 0)
                 {
                     mineCount++;
                 }
             }
             return mineCount;
-        }
+        }*/
     }
 
   
