@@ -21,6 +21,10 @@ using System.Windows.Threading;
 
 namespace MinesweeperGUI2
 {
+    /// <summary>
+    /// This class displays the minesweeper game. The INotifyPropertyChanged is used
+    /// to Update the TimeElapsed String which is binded to a TextBox (subject to change). 
+    /// </summary>
     public class MainWindowViewModel : INotifyPropertyChanged
     {
    
@@ -42,7 +46,14 @@ namespace MinesweeperGUI2
 
         public int GameLevel { get; set; }
         public ObservableCollection<Button> ButtonCells { get; set; }
+
+      
         private String _timeElapsed;
+        /// <summary>
+        /// Time elapsed is formatted in the Dt_Tick event handler. 
+        /// If the value of TimeElapsed is changed it will use the PropertyChanged event
+        /// activate the property value changed source trigger of the text box holding this value. 
+        /// </summary>
         public String TimeElapsed
         {
             get { return _timeElapsed; }
@@ -55,7 +66,7 @@ namespace MinesweeperGUI2
                     var handler = this.PropertyChanged;
                     if (handler != null)
                     {
-                        handler(this, new PropertyChangedEventArgs("TimeElapsed"));
+                        handler(this, new PropertyChangedEventArgs("TimeElapsed")); // Uses the 
                     }
                 }
             }
@@ -64,6 +75,14 @@ namespace MinesweeperGUI2
         public Stopwatch Stopwatch { get; set; }
 
         public ICommand NewGameCommand { get; set; }
+
+        /// <summary>
+        /// This method opens the new game window. The board is set with mines, 
+        /// based on the difficulty chosen. The number of mines neighboring each square
+        /// is calculated. Lastly, the buttons are placed on the board and are binded
+        /// to Cells. 
+        /// </summary>
+        /// <param name="panelWidth"></param>
         private void NewGame(object panelWidth)
         {
             var startNewGame = new NewGame();
@@ -75,19 +94,27 @@ namespace MinesweeperGUI2
             GameLevel = startNewGameViewModel.Level;
 
             _board = new Board(GameLevel);
-            _board.SetDifficulty(GameLevel * .05);
+            _board.SetDifficulty(GameLevel * .1);
             _board.SetupLiveNeighbors(_board);
             _board.CalculateLiveNeighbors(_board);
             double widthOfPanel = Convert.ToDouble(panelWidth);
             SetupBoard(widthOfPanel);
-
-
         }
 
+        /// <summary>
+        /// This method places the buttons within a panel. The size of the buttons
+        /// are made based on the panel width divided by the size of the board. 
+        /// Each button is given a name attribute with its respective row and column. The buttons
+        /// are then binded to Cell objects. A left mouse click and right mouse click event are also
+        /// added to each button. Lastly the dispatch time interval is set for 1 second and an event 
+        /// handler is set for Tick events. 
+        /// </summary>
+        /// <param name="panelWidth"></param>
         private void SetupBoard(double panelWidth)
         {
             
             var sizeOfbutton = panelWidth / _board.GetSize();
+            // 2 for loops to iterate through all rows and columns of the _board. 
             for (int row = 0; row < _board.GetSize(); row++)
             {
                 for (int col = 0; col < _board.GetSize(); col++)
@@ -107,7 +134,7 @@ namespace MinesweeperGUI2
                     btn.PreviewMouseRightButtonUp += Btn_PreviewMouseRightButtonUp;
                     btn.PreviewMouseLeftButtonUp += Btn_PreviewMouseLeftButtonUp;
 
-                    ButtonCells.Add(btn);
+                    ButtonCells.Add(btn); // Button is added to the ButtonCells Collection
                 }
             }
             TimeSpan interval = TimeSpan.FromSeconds(1);
@@ -118,6 +145,13 @@ namespace MinesweeperGUI2
 
         }
 
+        /// <summary>
+        /// This method handles Tick events occuring for dispatchTime. 
+        /// The elapsed time is formatted and then set as the value for 
+        /// Time elapsed.  
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Dt_Tick(object sender, EventArgs e)
         {
             TimeSpan ts = Stopwatch.Elapsed;
@@ -127,23 +161,35 @@ namespace MinesweeperGUI2
 
         }
 
+        /// <summary>
+        /// This method handles the a left mouse click by the User on a button. 
+        /// It contains the game play logic. The stopwatch is started. The Floodfill method is called to 
+        /// set the value of Visted to true for cells that have 0 neighboring mines and were next to the clicked
+        /// button. The IsCellLive method is then called to see if a user clicked on a mine (if they did a mine will be displayed 
+        /// and the game is over. The CheckVistedSquaresLeft method is called to see if there are any cells left that have not been
+        /// visted. If the user finds all squares without a mine the user wins and is shown all mine locations with a flag showing. 
+        /// Lastly, the ShowLiveNeighbors method is called to display the number of neighboring mines next to the recently revealed Cells. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Btn_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            // Starts the dispatch and stopwatch if time hasn't already started.
             if (!Stopwatch.IsRunning)
             {
                 dispatchTime.Start();
                 Stopwatch.Start();
-
-                
             }
 
-            var btn = (Button)sender;
-            var cell = btn.DataContext as Cell;
+            var btn = (Button)sender; 
+            var cell = btn.DataContext as Cell; //Binds the clicked button to a Cell
 
             Cell attemptedSquare = cell;
 
-            _board.FloodFill2(_board, attemptedSquare.GetRow(attemptedSquare), attemptedSquare.GetColumn(attemptedSquare));
+            //Floodfill method called recursively to show all squares without neighboring mines. 
+            _board.FloodFillUpgraded(_board, attemptedSquare.GetRow(attemptedSquare), attemptedSquare.GetColumn(attemptedSquare));
 
+            //Checks to see if the user clicked on a mine. If they do click on a mine than a mine will be shown
             if (attemptedSquare.IsCellLive(attemptedSquare))
             {
                 btn.Content = new Image
@@ -156,6 +202,7 @@ namespace MinesweeperGUI2
                 MessageBox.Show("You Lost!" + TimeElapsed + " seconds");
             }
 
+            //Checks if there are any squares left for the user to click on that are not mines. User wins if they find all squares without mines. 
             if (_board.CheckVisitedSquaresLeft(_board))
             {
                 
@@ -180,7 +227,7 @@ namespace MinesweeperGUI2
                 
             }
 
-            btn.Background = Brushes.Gray;
+            btn.Background = Brushes.Gray; // Setting the clicked buttons background as grey symbolized visted square. 
 
             foreach (var button in ButtonCells)
             {
@@ -189,13 +236,19 @@ namespace MinesweeperGUI2
 
                 if (cell2.GetCellVisited(cell2))
                 {
-                    button.Background = Brushes.Gray;
+                    button.Background = Brushes.Gray; // all visited squares set to a grey background. 
                 }
             }
             ShowLiveNeighbors(btn);
         }
 
-        // right-click
+       /// <summary>
+       /// This method handles right mouse click events. If a user clicks a button with a right
+       /// mouse click a flag will be displayed on that button. This typically symbolizes a cell location
+       /// that the user believes is a mine. 
+       /// </summary>
+       /// <param name="sender"></param>
+       /// <param name="e"></param>
         private void Btn_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             var btn = (Button)sender;
@@ -208,6 +261,12 @@ namespace MinesweeperGUI2
             };
 
         }
+
+        /// <summary>
+        /// This method is used to show the amount of mines adjacent to the Visted square. 
+        /// It is set to only show the cells bordering unvisted squares. 
+        /// </summary>
+        /// <param name="btn"></param>
         public void ShowLiveNeighbors(Button btn)
         {
             /*these arrays hold the x and y values for adjacent positions
@@ -220,6 +279,9 @@ namespace MinesweeperGUI2
             {
                 for (int y = 0; y < _board.GetSize(); y++)
                 {
+                    /*Iterating through the entire board and checking for visibile cells. When
+                      a visible cell is found it then checks its adjacent cells to see if there 
+                      if there are any unvisted cells.*/
                     if (_board.GetCell(x, y).GetCellVisited(_board.GetCell(x, y)))
                     {
 
@@ -263,7 +325,10 @@ namespace MinesweeperGUI2
 
         public ICommand ButtonCommand { get; set; }
 
-        // left-click
+        /// <summary>
+        /// To be continued....
+        /// </summary>
+        /// <param name="btn"></param>
         private void ExecuteButtonCommand(Button btn)
         {
 

@@ -435,7 +435,18 @@ namespace MinesweeperClassLibrary
                 }
         }
 
-        public void FloodFill2(Board theBoard, int row, int col)
+        /// <summary>
+        /// A  Recursive method that checks the adjacent Cells around
+        /// the given row and column for bombs. If no bomb is found the 
+        /// value of the Cell is changed to visted. The method is called 
+        /// recursively until either the row and column are out of bounds or 
+        /// a bomb is found adjacent to the row and column
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns>False when row and col are out of bounds or a bomb is found 
+        /// adjacent to the row and column</returns>
+        public void FloodFillUpgraded(Board theBoard, int row, int col)
         {
 
             if(LimitCheck(row, col) && Grid[row, col].GetCellVisited(Grid[row, col]) == false)
@@ -444,14 +455,14 @@ namespace MinesweeperClassLibrary
 
                 if(Grid[row, col].GetNeighbors(Grid[row, col]) == 0)
                 {
-                    FloodFill2(theBoard, row - 1, col - 1);
-                    FloodFill2(theBoard, row - 1, col);
-                    FloodFill2(theBoard, row - 1, col + 1);
-                    FloodFill2(theBoard, row, col - 1);
-                    FloodFill2(theBoard, row, col + 1);
-                    FloodFill2(theBoard, row + 1, col - 1);
-                    FloodFill2(theBoard, row + 1, col);
-                    FloodFill2(theBoard, row + 1, col + 1);
+                    FloodFillUpgraded(theBoard, row - 1, col - 1);
+                    FloodFillUpgraded(theBoard, row - 1, col);
+                    FloodFillUpgraded(theBoard, row - 1, col + 1);
+                    FloodFillUpgraded(theBoard, row, col - 1);
+                    FloodFillUpgraded(theBoard, row, col + 1);
+                    FloodFillUpgraded(theBoard, row + 1, col - 1);
+                    FloodFillUpgraded(theBoard, row + 1, col);
+                    FloodFillUpgraded(theBoard, row + 1, col + 1);
                 }
             }
 
