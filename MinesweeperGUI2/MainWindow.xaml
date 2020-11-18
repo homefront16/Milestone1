@@ -8,21 +8,24 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="131*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="633*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Grid.ColumnSpan="1">
+        <Menu Grid.Row="0" Grid.Column="0">
             <MenuItem Header="New Game" Command="{Binding NewGameCommand}" CommandParameter="{Binding ElementName=panel, Path=Width}"/>
         </Menu>
-        <WrapPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Background="LightGreen">
+        <WrapPanel Grid.Row="0" Grid.Column="1" Background="LightGreen">
             <TextBlock x:Name="stopwatch" FontSize="24" Text="{Binding TimeElapsed, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
         </WrapPanel>
+        <Menu Grid.Row="0"  Grid.Column="2" >
+            <MenuItem Header="Player Statistics" Command="{Binding PlayerStatisticsCommand}" CommandParameter="{Binding ElementName=panel, Path=Width}"/>
+        </Menu>
   
 
         <ItemsControl  x:Name="panel" Grid.Row="1" Width="800" Height="800" Margin ="100" ItemsSource="{Binding ButtonCells, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="3">

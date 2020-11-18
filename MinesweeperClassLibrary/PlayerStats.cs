@@ -1,0 +1,62 @@
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+namespace MinesweeperClassLibrary
+{
+    public class PlayerStats : IComparable<PlayerStats>
+    {
+        public String Name { get; set; }
+        public int Score { get; set; }
+        public int Difficulty { get; set; }
+        public int Time { get; set; }
+
+        public PlayerStats()
+        {
+
+        }
+
+        public PlayerStats(string name, int difficulty, int time)
+        {
+            Name = name;
+            Difficulty = difficulty;
+            Time = time;
+            Score = difficulty * time;
+        }
+
+        public override string ToString()
+        {
+            return "Player: " + Name + " Score: " + Score + " Difficulty: " + Difficulty + " Time " + Time;
+        }
+
+        public int CompareTo(PlayerStats other)
+        {
+            if(this.Score == other.Score)
+            {
+                return other.Difficulty.CompareTo(this.Difficulty);
+            }
+
+            return other.Score.CompareTo(this.Score);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerStats stats &&
+                   Name == stats.Name &&
+                   Score == stats.Score &&
+                   Difficulty == stats.Difficulty &&
+                   Time == stats.Time;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 1647062255;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = hashCode * -1521134295 + Score.GetHashCode();
+            hashCode = hashCode * -1521134295 + Difficulty.GetHashCode();
+            hashCode = hashCode * -1521134295 + Time.GetHashCode();
+            return hashCode;
+        }
+
+
+    }
+}

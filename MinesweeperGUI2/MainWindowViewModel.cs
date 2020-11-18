@@ -30,12 +30,15 @@ namespace MinesweeperGUI2
    
         private Board _board;
         private DispatcherTimer dispatchTime;
+        private DataHandling _dataHandling;
+        private List<PlayerStats> _playerStats;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindowViewModel()
         {
             NewGameCommand = new DelegateCommand<object>(NewGame);
+            PlayerStatisticsCommand = new DelegateCommand<object>(PlayerStatisticsMethod);
             ButtonCommand = new DelegateCommand<Button>(ExecuteButtonCommand);
             ButtonCells = new ObservableCollection<Button>();
             Stopwatch = new Stopwatch();
@@ -43,6 +46,23 @@ namespace MinesweeperGUI2
            
             
         }
+
+        private void PlayerStatisticsMethod(object obj)
+        {
+            var showPlayerStatistics = new PlayerStatistics();
+            var showPlayerStatisticsModel = new PlayerStatisticsViewModel(showPlayerStatistics);
+            showPlayerStatistics.DataContext = showPlayerStatisticsModel;
+
+            
+
+            
+            showPlayerStatistics.ShowDialog();
+
+            // GameLevel = showPlayerStatisticsModel.GameLevel;
+            // TimeElapsed = showPlayerStatisticsModel.TimeElapsed;
+        }
+
+      
 
         public int GameLevel { get; set; }
         public ObservableCollection<Button> ButtonCells { get; set; }
@@ -75,6 +95,7 @@ namespace MinesweeperGUI2
         public Stopwatch Stopwatch { get; set; }
 
         public ICommand NewGameCommand { get; set; }
+        public ICommand PlayerStatisticsCommand { get; set; }
 
         /// <summary>
         /// This method opens the new game window. The board is set with mines, 
@@ -200,6 +221,7 @@ namespace MinesweeperGUI2
                 dispatchTime.Stop();
                 Stopwatch.Stop();
                 MessageBox.Show("You Lost!" + TimeElapsed + " seconds");
+                
             }
 
             //Checks if there are any squares left for the user to click on that are not mines. User wins if they find all squares without mines. 
