@@ -5,15 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MinesweeperGUI2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="900" Width="900">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -26,9 +27,14 @@
         <Menu Grid.Row="0"  Grid.Column="2" >
             <MenuItem Header="Player Statistics" Command="{Binding PlayerStatisticsCommand}" CommandParameter="{Binding ElementName=panel, Path=Width}"/>
         </Menu>
+        <WrapPanel Grid.Row="0" Grid.Column="3" >
+            <Button Content="Submit Name" Command="{Binding NameCommand, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=PlayerName, Path=Text}"></Button>
+            <TextBox x:Name="PlayerName" FontSize="24" Width="124" Margin="10 0 0 0"></TextBox>
+        </WrapPanel>
+     
   
 
-        <ItemsControl  x:Name="panel" Grid.Row="1" Width="800" Height="800" Margin ="100" ItemsSource="{Binding ButtonCells, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="3">
+        <ItemsControl  x:Name="panel" Grid.Row="1" Width="700" Height="700" Margin ="0" ItemsSource="{Binding ButtonCells, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="4">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel/>

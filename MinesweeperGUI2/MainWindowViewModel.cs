@@ -27,10 +27,19 @@ namespace MinesweeperGUI2
     /// </summary>
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-   
+        public int GameLevel { get; set; }
+        public ObservableCollection<Button> ButtonCells { get; set; }
+        public Stopwatch Stopwatch { get; set; }
+
+        public ICommand NewGameCommand { get; set; }
+        public ICommand NameCommand { get; set; }
+        public ICommand PlayerStatisticsCommand { get; set; }
+        public ICommand ButtonCommand { get; set; }
+
         private Board _board;
         private DispatcherTimer dispatchTime;
         private DataHandling _dataHandling;
+        private PlayerStats _playerStat;
         private List<PlayerStats> _playerStats;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -43,31 +52,58 @@ namespace MinesweeperGUI2
             ButtonCells = new ObservableCollection<Button>();
             Stopwatch = new Stopwatch();
             dispatchTime = new DispatcherTimer();
-           
             
+            NameCommand = new DelegateCommand<string>(GetName);
+
         }
 
+        /// <summary>
+        /// When the submit name button is clicked the method will 
+        /// get the string value entered in the textbox "PlayerName". 
+        /// It will store the value as the Name property. 
+        /// </summary>
+        /// <param name="name"></param>
+        private void GetName(String name)
+        {
+            Name = name;
+        }
+
+        /// <summary>
+        /// Method will instantiate a new players statisics view and view model. 
+        /// It will then show the dialog box with player statistics. 
+        /// </summary>
+        /// <param name="obj"></param>
         private void PlayerStatisticsMethod(object obj)
         {
             var showPlayerStatistics = new PlayerStatistics();
             var showPlayerStatisticsModel = new PlayerStatisticsViewModel(showPlayerStatistics);
             showPlayerStatistics.DataContext = showPlayerStatisticsModel;
 
-            
-
-            
             showPlayerStatistics.ShowDialog();
-
-            // GameLevel = showPlayerStatisticsModel.GameLevel;
-            // TimeElapsed = showPlayerStatisticsModel.TimeElapsed;
         }
 
-      
+        private String _Name;
+         /// <summary>
+         /// Property holds the name value Typically taken from a textbox. It also utilizes
+         /// the PropertyChanged event which will update whenever the value is changed. 
+         /// </summary>
+        public String Name
+        {
+            get { return _Name; }
+            set
+            {
+                if (value != this.Name)
+                {
+                    _Name = value;
 
-        public int GameLevel { get; set; }
-        public ObservableCollection<Button> ButtonCells { get; set; }
-
-      
+                    var handler = this.PropertyChanged;
+                    if (handler != null)
+                    {
+                        handler(this, new PropertyChangedEventArgs("Name")); // Uses the 
+                    }
+                }
+            }
+        }
         private String _timeElapsed;
         /// <summary>
         /// Time elapsed is formatted in the Dt_Tick event handler. 
@@ -92,11 +128,6 @@ namespace MinesweeperGUI2
             }
         }
 
-        public Stopwatch Stopwatch { get; set; }
-
-        public ICommand NewGameCommand { get; set; }
-        public ICommand PlayerStatisticsCommand { get; set; }
-
         /// <summary>
         /// This method opens the new game window. The board is set with mines, 
         /// based on the difficulty chosen. The number of mines neighboring each square
@@ -115,7 +146,7 @@ namespace MinesweeperGUI2
             GameLevel = startNewGameViewModel.Level;
 
             _board = new Board(GameLevel);
-            _board.SetDifficulty(GameLevel * .1);
+            _board.SetDifficulty(GameLevel * .05);
             _board.SetupLiveNeighbors(_board);
             _board.CalculateLiveNeighbors(_board);
             double widthOfPanel = Convert.ToDouble(panelWidth);
@@ -245,7 +276,29 @@ namespace MinesweeperGUI2
                 dispatchTime.Stop();
                 Stopwatch.Stop();
                 MessageBox.Show("You Won in " + TimeElapsed + " seconds");
+
+                /* After the game is over and a player wins. There name, score, time, and difficulty are stored. 
+                   A PlayerStats object is instanitated and then added to a list of PlayerStats objects. This list
+                    is then written to a JSON file. The json file is the file read by the PlayerStatistics View Model. */
+                _dataHandling = new DataHandling();
+                _playerStats = new List<PlayerStats>();
+                string fileName = @"C:\Users\Raymond\Source\Repos\homefront16\Milestone1\MinesweeperGUI2\Data\PlayerStats.json";
+                _playerStats = _dataHandling.ReadJSONFile(fileName); // File is read and deserialized so that the list is always up to date. 
+
+                _playerStat = new PlayerStats
+                {
+                    
+                    Difficulty = GameLevel,
+                    Time = Int32.Parse(Stopwatch.ElapsedMilliseconds.ToString()) / 100
+                };
+                _playerStat.Score = _playerStat.Time / _playerStat.Difficulty;
+                _playerStat.Name = Name;
+
+                _playerStats.Add(_playerStat); // Instantiated PlayerStats object added to the _PlyaerStats list
                 
+
+                _dataHandling.WriteToJSON(_playerStats); //List written to a JSON file. 
+
                 
             }
 
@@ -345,10 +398,9 @@ namespace MinesweeperGUI2
             }
         }
 
-        public ICommand ButtonCommand { get; set; }
-
         /// <summary>
-        /// To be continued....
+        /// To be continued.... Placeholder Command. Can be used for additional functionality
+        /// with click events or other events when needed. 
         /// </summary>
         /// <param name="btn"></param>
         private void ExecuteButtonCommand(Button btn)

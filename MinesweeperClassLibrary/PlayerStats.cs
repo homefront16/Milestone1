@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 namespace MinesweeperClassLibrary
 {
@@ -10,6 +11,11 @@ namespace MinesweeperClassLibrary
         public int Difficulty { get; set; }
         public int Time { get; set; }
 
+    
+        /// <summary>
+        /// Empty constructor to allow instaniating PlayerStats object without
+        /// and parameters. 
+        /// </summary>
         public PlayerStats()
         {
 
@@ -20,14 +26,24 @@ namespace MinesweeperClassLibrary
             Name = name;
             Difficulty = difficulty;
             Time = time;
-            Score = difficulty * time;
+            Score = time / difficulty;
         }
-
+        
+        /// <summary>
+        /// Override the ToString method to show player name, score, difficulty, and Time.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return "Player: " + Name + " Score: " + Score + " Difficulty: " + Difficulty + " Time " + Time;
         }
 
+        /// <summary>
+        /// Override the compareTo method sorting by score and then by 
+        /// difficulty in the event of scores being equal. 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public int CompareTo(PlayerStats other)
         {
             if(this.Score == other.Score)
@@ -38,6 +54,11 @@ namespace MinesweeperClassLibrary
             return other.Score.CompareTo(this.Score);
         }
 
+        /// <summary>
+        /// Overriding equals method standard formatting. 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return obj is PlayerStats stats &&
@@ -47,6 +68,10 @@ namespace MinesweeperClassLibrary
                    Time == stats.Time;
         }
 
+        /// <summary>
+        /// Overriding get hash code standard formatting. 
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             int hashCode = 1647062255;
@@ -57,6 +82,6 @@ namespace MinesweeperClassLibrary
             return hashCode;
         }
 
-
+     
     }
 }

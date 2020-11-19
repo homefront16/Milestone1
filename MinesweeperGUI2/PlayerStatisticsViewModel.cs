@@ -33,16 +33,10 @@ namespace MinesweeperGUI2
             this.playerStatisticsList = new ObservableCollection<PlayerStats>();
         }
 
-        /*private ObservableCollection<PlayerStatistics> GetPlayerStatisticsList()
-        {
-            return 
-        }
-*/
         private String _Name;
         /// <summary>
-        /// Time elapsed is formatted in the Dt_Tick event handler. 
-        /// If the value of TimeElapsed is changed it will use the PropertyChanged event
-        /// activate the property value changed source trigger of the text box holding this value. 
+        /// Property holds the name value Typically taken from a textbox. It also utilizes
+        /// the PropertyChanged event which will update whenever the value is changed. 
         /// </summary>
         public String Name
         {
@@ -63,9 +57,8 @@ namespace MinesweeperGUI2
         }
         private int _Score;
         /// <summary>
-        /// Time elapsed is formatted in the Dt_Tick event handler. 
-        /// If the value of TimeElapsed is changed it will use the PropertyChanged event
-        /// activate the property value changed source trigger of the text box holding this value. 
+        /// Property holds the Score value taken from the json file. It also utilizes
+        /// the PropertyChanged event which will update whenever the value is changed. 
         /// </summary>
         public int Score
         {
@@ -85,6 +78,10 @@ namespace MinesweeperGUI2
             }
         }
         private int _TimeElapsed;
+        /// <summary>
+        /// Property holds the Time Elapsed value taken from the json file. It also utilizes
+        /// the PropertyChanged event which will update whenever the value is changed. 
+        /// </summary>
         public int TimeElapsed
         {
             get { return _Score; }
@@ -103,6 +100,11 @@ namespace MinesweeperGUI2
             }
         }
         private int _GameLevel;
+
+        /// <summary>
+        /// Property holds the GameLevel value taken from the json file. It also utilizes
+        /// the PropertyChanged event which will update whenever the value is changed. 
+        /// </summary>
         public int GameLevel
         {
             get { return _GameLevel; }
@@ -122,22 +124,27 @@ namespace MinesweeperGUI2
         }
 
 
-
+        /// <summary>
+        /// This method reads a json file. That file is deserialized in to a list of 
+        /// PlayerStat objects. Those objects are sorted to the top 5 scores via a
+        /// LINQ query. The display data can be changed with other LINQ querys if requested. 
+        /// </summary>
+        /// <param name="obj"></param>
         private void InsertStatistics(object obj)
         {
             _dataHandling = new DataHandling();
 
             string fileName = @"C:\Users\Raymond\Source\Repos\homefront16\Milestone1\MinesweeperGUI2\Data\PlayerStats.json";
             _playerStats = new List<PlayerStats>();         
-            _playerStats = _dataHandling.ReadJSONFile(fileName);
-           
-            foreach(PlayerStats playerStat in _playerStats)
+            _playerStats = _dataHandling.ReadJSONFile(fileName); // Deserializing file in to list of PlayerStats objects
+
+            var topFivePlayers = (from playerStat in _playerStats
+                                 orderby playerStat.Score descending
+                                  select playerStat).Take(5); // LINQ query for TOP 5 Scores. 
+
+            foreach(PlayerStats playerStat in topFivePlayers)
             {
-                playerStatisticsList.Add(playerStat);
-            /*    Name = playerStat.Name;
-                Score = playerStat.Score;
-                GameLevel = playerStat.Difficulty;
-                TimeElapsed = playerStat.Time;*/
+                playerStatisticsList.Add(playerStat); // Adding to display list of PlayerStats objects. 
             }
         }
 

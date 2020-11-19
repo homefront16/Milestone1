@@ -9,33 +9,24 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="8*"/>
+            <RowDefinition Height="6*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0">
+
+        <StackPanel Grid.Row="0" >
             <Button Command="{Binding InsertStatisticsCommand}" Height="50" Width="200" Content="Click Here to See Statistics"></Button>
         </StackPanel>
-        <ListBox Grid.Row="1" Grid.RowSpan="4" Grid.ColumnSpan="5" ItemsSource="{Binding Path=playerStatisticsList}">
-            <ListBox.ItemTemplate>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Path=playerStatisticsList}">
+            <DataGrid.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock Text="{Binding Path=Name}"/>
-                        <TextBlock Text="{Binding Path=Score}"/>
-                        <TextBlock Text="{Binding Path=Difficulty}"/>
-                        <TextBlock Text="{Binding Path=Time}"/>
+                        <TextBlock FontSize="24" Text="{Binding Path=Name}"/>
+                        <TextBlock FontSize="24" Text="{Binding Path=Score}"/>
+                        <TextBlock FontSize="24" Text="{Binding Path=Difficulty}"/>
+                        <TextBlock FontSize="24" Text="{Binding Path=Time}"/>
                     </StackPanel>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            </DataGrid.ItemTemplate>
+        </DataGrid>
 
 
 
